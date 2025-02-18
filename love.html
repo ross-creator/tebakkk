@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>❤️</title>
+    <style>
+      canvas {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.2);
+      }
+
+      .music-hint {
+        position: fixed;
+        bottom: 70px;
+        right: 70px;
+        color: rgba(0, 127, 255, 0.85);
+        font-family: 'Dancing Script', cursive;
+        font-size: 24px;
+        animation: bounce 2s infinite;
+        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        z-index: 1000;
+      }
+
+      .arrow {
+        position: fixed;
+        bottom: 45px;
+        right: 65px;
+        color: rgba(0, 127, 255, 0.85);
+        font-size: 30px;
+        transform: rotate(45deg);
+        animation: bounce 2s infinite;
+        z-index: 1000;
+      }
+
+      @keyframes bounce {
+        0%,
+        100% {
+          transform: translateY(0);
+        }
+        50% {
+          transform: translateY(-10px);
+        }
+      }
+    </style>
+    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Quicksand:wght@500;700&display=swap" rel="stylesheet" />
+  </head>
+  <body>
+    <!-- Modifikasi bagian audio -->
+    <audio id="myAudio" preload="auto" autoplay loop>
+      <source src="./jj.mp3" type="audio/mp3" />
+      Your browser does not support the audio element.
+    </audio>
+    <button onclick="togglePlay()" style="position: fixed; bottom: 20px; right: 20px; z-index: 100; padding: 10px; background: rgba(0, 127, 255, 0.3); border: none; color: white; cursor: pointer; border-radius: 50%">🎵</button>
+
+    <!-- Add these two lines back -->
+    <div class="music-hint">klik disini cuyyy buat laguuu</div>
+    <div class="arrow">↓</div>
+
+    <canvas id="heart"></canvas>
+    <script>
+      var audio = document.getElementById('myAudio');
+
+      // Fungsi untuk memulai audio
+      function startAudio() {
+        audio.play().catch(function (error) {
+          console.log('Autoplay failed:', error);
+        });
+      }
+
+      // Coba putar saat dokumen dimuat
+      document.addEventListener('DOMContentLoaded', startAudio);
+
+      // Coba putar saat window load
+      window.addEventListener('load', startAudio);
+
+      // Coba putar saat user berinteraksi
+      document.addEventListener('click', startAudio, { once: true });
+      document.addEventListener('touchstart', startAudio, { once: true });
+
+      // Error handling
+      audio.onerror = function () {
+        console.error('Error loading audio file');
+      };
+
+      function togglePlay() {
+        if (audio.paused) {
+          startAudio();
+        } else {
+          audio.pause();
+        }
+      }
+
+      window.requestAnimationFrame =
+        window.__requestAnimationFrame ||
+        window.requestAnimationFrame ||
+        window.webkitRequestAnimationFrame ||
+        window.mozRequestAnimationFrame ||
+        window.oRequestAnimationFrame ||
+        window.msRequestAnimationFrame ||
+        (function () {
+          return function (callback, element) {
+            var lastTime = element.__lastTime || 0;
+            var currTime = Date.now();
+            var timeToCall = Math.max(1, 33 - (currTime - lastTime));
+            window.setTimeout(callback, timeToCall);
+            element.__lastTime = currTime + timeToCall;
+          };
+        })();
+
+      window.isDevice = /android|webos|iphone|ipad|ipod|blackberry|iemobile|opera mini/i.test((navigator.userAgent || navigator.vendor || window.opera).toLowerCase());
+
+      var loaded = false;
+
+      // Tambahkan variabel untuk animasi di luar fungsi init
+      var textOpacity = 0;
+      var textOffset = 50;
+
+      var init = function () {
+        if (loaded) return;
+        loaded = true;
+        var mobile = window.isDevice;
+        var koef = mobile ? 0.5 : 1;
+        var canvas = document.getElementById('heart');
+        var ctx = canvas.getContext('2d');
+        var width = (canvas.width = koef * innerWidth);
+        var height = (canvas.height = koef * innerHeight);
+        var rand = Math.random;
+
+        ctx.fillStyle = 'rgba(0,0,0,1)';
+        ctx.fillRect(0, 0, width, height);
+
+        // Ganti fungsi drawText dengan yang baru
+        var drawText = function () {
+          // Update opacity with smoother fade-in
+          if (textOpacity < 1) {
+            textOpacity += 0.002;
+          }
+
+          // Set text properties
+          ctx.globalAlpha = textOpacity;
+          ctx.fillStyle = 'rgba(0, 127, 255, 0.85)';
+          ctx.textAlign = 'center';
+          ctx.textBaseline = 'middle';
+
+          // First text
+          ctx.font = "bold 45px 'Dancing Script', cursive";
+          ctx.fillText('Semoga tanggal 18 nanti', width / 2, height / 2 - 80);
+
+          // Second text
+          ctx.font = "bold 42px 'Dancing Script', cursive";
+          ctx.fillText('kita dapet biru', width / 2, height / 2);
+
+          // Third text (Aamiin)
+          ctx.font = "bold 48px 'Dancing Script', cursive";
+          ctx.fillText('aamiin, aamiin, aamiin', width / 2, height / 2 + 80);
+
+          // Reset opacity
+          ctx.globalAlpha = 1;
+        };
+
+        var heartPosition = function (rad) {
+          return [Math.pow(Math.sin(rad), 3), -(15 * Math.cos(rad) - 5 * Math.cos(2 * rad) - 2 * Math.cos(3 * rad) - Math.cos(4 * rad))];
+        };
+
+        var scaleAndTranslate = function (pos, sx, sy, dx, dy) {
+          return [dx + pos[0] * sx, dy + pos[1] * sy];
+        };
+
+        window.addEventListener('resize', function () {
+          width = canvas.width = koef * innerWidth;
+          height = canvas.height = koef * innerHeight;
+          ctx.fillStyle = 'rgba(0,0,0,1)';
+          ctx.fillRect(0, 0, width, height);
+        });
+
+        var traceCount = mobile ? 20 : 50;
+        var pointsOrigin = [];
+        var dr = mobile ? 0.3 : 0.1;
+        for (var i = 0; i < Math.PI * 2; i += dr) pointsOrigin.push(scaleAndTranslate(heartPosition(i), 310, 19, 0, 0));
+        for (var i = 0; i < Math.PI * 2; i += dr) pointsOrigin.push(scaleAndTranslate(heartPosition(i), 250, 15, 0, 0));
+        for (var i = 0; i < Math.PI * 2; i += dr) pointsOrigin.push(scaleAndTranslate(heartPosition(i), 190, 11, 0, 0));
+
+        var heartPointsCount = pointsOrigin.length;
+        var targetPoints = [];
+
+        var pulse = function (kx, ky) {
+          for (var i = 0; i < pointsOrigin.length; i++) {
+            targetPoints[i] = [kx * pointsOrigin[i][0] + width / 2, ky * pointsOrigin[i][1] + height / 2.2];
+          }
+        };
+
+        var e = [];
+        for (var i = 0; i < heartPointsCount; i++) {
+          var x = rand() * width;
+          var y = rand() * height;
+          e[i] = {
+            vx: 0,
+            vy: 0,
+            R: 2,
+            speed: rand() + 5,
+            q: ~~(rand() * heartPointsCount),
+            D: 2 * (i % 2) - 1,
+            force: 0.2 * rand() + 0.7,
+            f: 'rgba(0, 127, 255, 0.7)',
+            trace: Array.from({ length: traceCount }, () => ({ x, y })),
+          };
+        }
+
+        var config = { traceK: 0.4, timeDelta: 0.6 };
+        var time = 0;
+
+        var loop = function () {
+          var n = -Math.cos(time);
+          pulse((1 + n) * 0.5, (1 + n) * 0.5);
+          time += (Math.sin(time) < 0 ? 9 : n > 0.8 ? 0.2 : 1) * config.timeDelta;
+
+          ctx.fillStyle = 'rgba(0,0,0,.1)';
+          ctx.fillRect(0, 0, width, height);
+
+          for (var i = e.length; i--; ) {
+            var u = e[i];
+            var q = targetPoints[u.q];
+            var dx = u.trace[0].x - q[0];
+            var dy = u.trace[0].y - q[1];
+            var length = Math.sqrt(dx * dx + dy * dy);
+
+            if (length < 10) {
+              if (rand() > 0.95) {
+                u.q = ~~(rand() * heartPointsCount);
+              } else {
+                if (rand() > 0.99) u.D *= -1;
+                u.q = (u.q + u.D) % heartPointsCount;
+                if (u.q < 0) u.q += heartPointsCount;
+              }
+            }
+
+            u.vx += (-dx / length) * u.speed;
+            u.vy += (-dy / length) * u.speed;
+            u.trace[0].x += u.vx;
+            u.trace[0].y += u.vy;
+            u.vx *= u.force;
+            u.vy *= u.force;
+
+            for (var k = 0; k < u.trace.length - 1; k++) {
+              var T = u.trace[k];
+              var N = u.trace[k + 1];
+              N.x -= config.traceK * (N.x - T.x);
+              N.y -= config.traceK * (N.y - T.y);
+            }
+
+            ctx.fillStyle = u.f;
+            u.trace.forEach((t) => ctx.fillRect(t.x, t.y, 1, 1));
+          }
+
+          drawText();
+          window.requestAnimationFrame(loop, canvas);
+        };
+
+        loop();
+      };
+
+      var s = document.readyState;
+      if (s === 'complete' || s === 'loaded' || s === 'interactive') init();
+      else document.addEventListener('DOMContentLoaded', init);
+    </script>
+  </body>
+</html>
